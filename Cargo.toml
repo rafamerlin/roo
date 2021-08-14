@@ -1,0 +1,21 @@
+[package]
+name = "roo-cli"
+description = "A simple command line tool to find a file and call another app with the found one as argument"
+version = "0.0.3"
+authors = ["Rafael Merlin"]
+edition = "2018"
+categories = ["command-line-utilities"]
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+homepage = "https://github.com/rafamerlin/roo"
+repository = "https://github.com/rafamerlin/roo"
+keywords = ["cli", "search"]
+
+[dependencies]
+clap = "2.33.1"
+walkdir = "2.3.1"
+anyhow = "1.0.31"
+config = "0.9"
+serde = { version = "1.0", features = ["derive"] }
+dialoguer = "0.8.0"
+dirs-next = "2.0.0"
