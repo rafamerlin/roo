@@ -1,7 +1,7 @@
 [package]
 name = "roo-cli"
 description = "A simple command line tool to find a file and call another app with the found one as argument"
-version = "0.0.3"
+version = "0.0.4"
 authors = ["Rafael Merlin"]
 edition = "2018"
 categories = ["command-line-utilities"]
@@ -19,3 +19,5 @@ config = "0.9"
 serde = { version = "1.0", features = ["derive"] }
 dialoguer = "0.8.0"
 dirs-next = "2.0.0"
+timer = "0.2.0"
+chrono = "0.4.19"

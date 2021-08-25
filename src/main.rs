@@ -4,13 +4,13 @@ mod settings;
 
 use anyhow::{anyhow, Result};
 use clap::ArgMatches;
+use dialoguer::{theme::ColorfulTheme, Select};
 use settings::Settings;
 use std::env;
 use std::path::{Path, PathBuf};
 use std::process;
 use std::process::{Command, Stdio};
-// use text_io::try_read;
-use dialoguer::{theme::ColorfulTheme, Select};
+use std::sync::mpsc::channel;
 
 fn main() -> Result<()> {
     let settings = Settings::new().expect("Incorrect Config file");
@@ -106,11 +106,23 @@ fn regular_run(matches: ArgMatches, settings: &Settings) -> Result<()> {
         selected_settings.command, command_path
     );
 
+    let (tx, rx) = channel();
+    if settings.delay > 0 {
+        println!("Opening in {}ms", settings.delay);
+    }
+    let timer = timer::Timer::new();
+    let _guard =
+        timer.schedule_with_delay(chrono::Duration::milliseconds(settings.delay), move || {
+            let _ignored = tx.send(());
+        });
+    rx.recv()?;
+
     Command::new(&selected_settings.command)
         .stdout(Stdio::null())
         .stderr(Stdio::null())
         .arg(command_path)
-        .spawn()?;
+        .spawn()
+        .unwrap();
 
     Ok(())
 }

@@ -9,6 +9,7 @@ use std::error;
 pub struct Settings {
     pub commands: Vec<Commands>,
     pub walkdir: WalkDirChoice,
+    pub delay: i64,
 }
 
 #[derive(Debug, Deserialize)]
@@ -55,6 +56,8 @@ impl Settings {
         //Default value for walkdir
         s.set_default("walkdir", "WalkDir")?;
 
+        s.set_default("delay", "0")?;
+
         // Start off by merging in the "default" configuration file
         s.merge(File::new(&settings_file, FileFormat::Yaml))?;
 
@@ -68,6 +71,7 @@ impl Settings {
 \nThe `commands:` is at upper level so it always stays there.
 You need to from the keys on, don't forget to escape \\ example:
 \n\nwalkdir: fd
+\n\ndelay: 0
 commands:
   - key: \"vs\"
     command: \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Professional\\Common7\\IDE\\devenv.exe\"
