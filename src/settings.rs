@@ -107,7 +107,7 @@ Search by:{:?}
         list
     }
 
-    pub fn find_by_command_key(self: &Self, command_key: &str) -> Result<&Commands> {
+    pub fn find_by_command_key(&self, command_key: &str) -> Result<&Commands> {
         self.commands
             .iter()
             .find(|x| x.key == command_key)

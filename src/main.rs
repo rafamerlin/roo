@@ -64,8 +64,8 @@ fn regular_run(matches: ArgMatches, settings: &Settings) -> Result<()> {
     let selected_settings = settings.find_by_command_key(command_key)?;
 
     let found_paths = match settings.walkdir {
-        settings::WalkDirChoice::WalkDir => finder::wd_find(&selected_settings, path)?,
-        settings::WalkDirChoice::Fd => finder::fd_find(&selected_settings, path)?,
+        settings::WalkDirChoice::WalkDir => finder::wd_find(selected_settings, path)?,
+        settings::WalkDirChoice::Fd => finder::fd_find(selected_settings, path)?,
     };
 
     let found_paths = match filter_value {
@@ -129,7 +129,7 @@ fn regular_run(matches: ArgMatches, settings: &Settings) -> Result<()> {
 
 fn get_command_path<'a>(
     selected_settings: &settings::Commands,
-    path: &'a PathBuf,
+    path: &'a Path,
 ) -> Result<&'a Path> {
     let res: Result<&Path> = match (
         &selected_settings.command_type,

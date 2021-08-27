@@ -9,7 +9,7 @@ pub fn wd_find(command: &Commands, path: &str) -> Result<Vec<String>> {
         .into_iter()
         .filter_entry(|e| !is_hidden(e))
         .filter_map(|e| e.ok())
-        .filter(|e| filter_dir_entry(e, &command))
+        .filter(|e| filter_dir_entry(e, command))
         //I need to find a way to handle this as a result instead of unwraping it here.
         .map(|e| e.path().to_str().unwrap().to_owned())
         .collect();
@@ -31,7 +31,7 @@ pub fn fd_find(command: &Commands, path: &str) -> Result<Vec<String>> {
 
     let resp = String::from_utf8(output.stdout)?;
     let mut lines: Vec<String> = resp.lines().into_iter().map(|s| s.to_owned()).collect();
-    lines.sort_by(|a, b| a.to_lowercase().cmp(&b.to_lowercase()));
+    lines.sort_by_key(|a| a.to_lowercase());
 
     Ok(lines)
 }
