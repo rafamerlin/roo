@@ -34,6 +34,9 @@ It will search for all the files on that path that have the extension `.sln` and
 Troubleshoot
 ---
 
+**Instead of roo cargo is installing roo-cli**
+I'm hoping to have fixed this on v 0.0.5 of the app.
+
 **Where to put the .roo file?**
 
 To get to the home folder I'm using the `dirs-next` crate.
