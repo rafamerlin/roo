@@ -1,7 +1,7 @@
 [package]
 name = "roo-cli"
 description = "A simple command line tool to find a file and call another app with the found one as argument"
-version = "0.0.5"
+version = "0.0.6"
 authors = ["Rafael Merlin"]
 edition = "2018"
 categories = ["command-line-utilities"]

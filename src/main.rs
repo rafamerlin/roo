@@ -117,16 +117,32 @@ fn regular_run(matches: ArgMatches, settings: &Settings) -> Result<()> {
         });
     rx.recv()?;
 
+    open(selected_settings, command_path);
+
+    Ok(())
+}
+
+#[cfg(not(target_os = "macos"))]
+fn open(selected_settings: &settings::Commands, command_path: &Path) {
     Command::new(&selected_settings.command)
         .stdout(Stdio::null())
         .stderr(Stdio::null())
         .arg(command_path)
         .spawn()
         .unwrap();
-
-    Ok(())
 }
 
+#[cfg(target_os = "macos")]
+fn open(selected_settings: &settings::Commands, command_path: &Path) {
+    Command::new("open")
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .arg("-a")
+        .arg(&selected_settings.command)
+        .arg(command_path)
+        .spawn()
+        .unwrap();
+}
 fn get_command_path<'a>(
     selected_settings: &settings::Commands,
     path: &'a Path,
