@@ -49,33 +49,6 @@ fn is_hidden(entry: &DirEntry) -> bool {
 fn filter_dir_entry(entry: &DirEntry, commands: &Commands) -> bool {
     let maximum_depth = 10;
 
-    // let x: FnMut(Option<&str>) -> bool = match commands.search_by{
-    //     crate::settings::SearchBy::File |
-    //     crate::settings::SearchBy::Extension => {
-    //         |s: Option<&str>| true
-    //     }
-    //     crate::settings::SearchBy::Directory => {
-    //         |s: Option<&str>| true
-    //     }
-    // };
-
-    // let x: Box<dyn FnOnce(&str) -> bool> = match commands.search_by{
-    //     crate::settings::SearchBy::File |
-    //     crate::settings::SearchBy::Extension => {
-    //         Box::new(|s: &str| s.contains(&commands.search_for.to_owned()))
-    //     }
-    //     crate::settings::SearchBy::Directory => {
-    //         let mut extension_with_dot = commands.search_for.to_owned();
-    //         if !extension_with_dot.starts_with('.') {
-    //             extension_with_dot = format!(".{}", extension_with_dot);
-    //         }
-
-    //         Box::new(|s: &str| s.ends_with(&extension_with_dot))
-    //     }
-    // };
-
-    //TODO: "join" file and extension with one FnMut declared here.
-
     if entry.depth() >= maximum_depth {
         return false;
     }

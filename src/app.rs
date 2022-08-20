@@ -1,54 +1,31 @@
-use clap::{crate_version, App, AppSettings, Arg, SubCommand};
+use clap::{Parser, Subcommand};
 
-pub fn build_app() -> App<'static, 'static> {
-    App::new("roo")
-        .version(crate_version!())
-        .usage("roo [FLAGS/OPTIONS] [<pattern>] [<path>]")
-        .setting(AppSettings::ColoredHelp)
-        .setting(AppSettings::DeriveDisplayOrder)
-        .arg(
-            Arg::with_name("filter")
-                .required(false)
-                .help("Simple filter results by text")
-                .short("f")
-                .takes_value(true),
-        )
-        .arg(
-            Arg::with_name("command")
-                .required(false)
-                .help("Command key to use based on config file")
-                .long_help(""),
-        )
-        .arg(
-            Arg::with_name("path")
-                .required(false)
-                .help("the root directory for the filesystem search (optional)")
-                .long_help(
-                    "The directory where the filesystem search is rooted (optional). If \
-                         omitted, search the current working directory.",
-                ),
-        )
-        .subcommand(
-            SubCommand::with_name("config")
-                .about("Used for configuration")
-                .arg(
-                    Arg::with_name("list")
-                        .short("l")
-                        .long("list")
-                        .help("lists the configuration"),
-                )
-                .arg(
-                    Arg::with_name("add")
-                        .short("a")
-                        .long("add")
-                        .help("add new configuration"),
-                )
-                .arg(
-                    Arg::with_name("import")
-                        .short("i")
-                        .long("import")
-                        .help("import config file")
-                        .value_name("path"),
-                ),
-        )
+#[derive(Parser)]
+pub struct Args {
+    #[clap(
+        short = 'f',
+        long,
+        value_parser,
+        help = "Simple filter results by text"
+    )]
+    pub filter: Option<String>,
+
+    #[clap(value_parser, help = "Command key to use based on config file")]
+    pub command: Option<String>,
+
+    #[clap(value_parser, default_value_t = String::from("."), help = "The directory to run as root when searching (optional)")]
+    pub path: String,
+
+    #[clap(subcommand)]
+    pub sub_command: Option<SubCommands>,
+}
+
+#[derive(Subcommand)]
+pub enum SubCommands {
+    #[clap(help = "Shows the current loaded configurations")]
+    Config,
+}
+
+pub fn get_args() -> Args {
+    Args::parse()
 }

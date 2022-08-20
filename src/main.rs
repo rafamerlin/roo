@@ -3,10 +3,9 @@ mod finder;
 mod settings;
 
 use anyhow::{anyhow, Result};
-use clap::ArgMatches;
+use app::Args;
 use dialoguer::{theme::ColorfulTheme, Select};
 use settings::Settings;
-use std::env;
 use std::path::{Path, PathBuf};
 use std::process;
 use std::process::{Command, Stdio};
@@ -27,39 +26,25 @@ fn main() -> Result<()> {
 }
 
 fn run(settings: Settings) -> Result<()> {
-    let matches = app::build_app().get_matches_from(env::args_os());
+    let args = app::get_args();
 
-    match matches.subcommand() {
-        ("config", Some(sub_m)) => config_command(sub_m, &settings),
-        _ => regular_run(matches, &settings),
+    match &args.sub_command {
+        Some(app::SubCommands::Config) => {
+            println!("{}", settings.list()?);
+            Ok(())
+        }
+        None => regular_run(args, &settings),
     }
 }
 
-fn config_command(matches: &ArgMatches, settings: &Settings) -> Result<()> {
-    if matches.is_present("list") {
-        println!("{}", settings.list());
-    }
-
-    if matches.is_present("add") || matches.is_present("remove") {
-        println!("{}", Settings::add_or_remove()?);
-    }
-
-    if matches.is_present("import") {
-        let val = matches.value_of("import").unwrap();
-        println!("Import Triggered, value = {:?}", val);
-    }
-
-    Ok(())
-}
-
-fn regular_run(matches: ArgMatches, settings: &Settings) -> Result<()> {
-    let path = matches.value_of("path").unwrap_or(".");
-
-    let command_key = matches
-        .value_of("command")
+fn regular_run(args: Args, settings: &Settings) -> Result<()> {
+    let path = &args.path[..];
+    let command_key = args
+        .command
+        .as_ref()
         .ok_or_else(|| anyhow!("Missing command parameter"))?;
-
-    let filter_value = matches.value_of("filter");
+    let command_key = &command_key[..];
+    let filter_value = &args.filter;
 
     let selected_settings = settings.find_by_command_key(command_key)?;
 
