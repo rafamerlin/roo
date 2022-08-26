@@ -3,7 +3,7 @@ use config::{Config, File, FileFormat};
 use env::VarError;
 use serde::Deserialize;
 use std::env;
-use std::error;
+
 
 #[derive(Debug, Deserialize)]
 pub struct Settings {
@@ -50,16 +50,17 @@ impl Settings {
         Ok(arg + "/.roo")
     }
 
-    pub fn new() -> Result<Self, Box<dyn error::Error>> {
+    pub fn new() -> Result<Self> {
         let settings_file = Self::settings_file()?;
 
-        let config = Config::builder()
+        let settings = Config::builder()
             .add_source(File::new(&settings_file, FileFormat::Yaml))
             .set_default("walkdir", "WalkDir")?
             .set_default("delay", "0")?
-            .build()?;
+            .build()?
+            .try_deserialize()?;
 
-        config.try_deserialize().map_err(|e| e.into())
+        Ok(settings)
     }
 
     pub fn list(&self) -> Result<String> {
