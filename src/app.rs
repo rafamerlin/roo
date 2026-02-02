@@ -22,7 +22,7 @@ pub struct Args {
 
 #[derive(Subcommand)]
 pub enum SubCommands {
-    #[clap(help = "Shows the current loaded configurations")]
+    #[clap(about = "Shows the current loaded configurations")]
     Config,
 }
 

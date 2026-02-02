@@ -48,10 +48,7 @@ fn regular_run(args: Args, settings: &Settings) -> Result<()> {
 
     let selected_settings = settings.find_by_command_key(command_key)?;
 
-    let found_paths = match settings.walkdir {
-        settings::WalkDirChoice::WalkDir => finder::wd_find(selected_settings, path)?,
-        settings::WalkDirChoice::Fd => finder::fd_find(selected_settings, path)?,
-    };
+    let found_paths = finder::fd_find(selected_settings, path)?;
 
     let found_paths = match filter_value {
         Some(filter) => found_paths
@@ -108,8 +105,10 @@ fn regular_run(args: Args, settings: &Settings) -> Result<()> {
 }
 
 #[cfg(not(target_os = "macos"))]
+#[allow(clippy::zombie_processes)]
 fn open(selected_settings: &settings::Commands, command_path: &Path) {
     Command::new(&selected_settings.command)
+        .stdin(Stdio::null())
         .stdout(Stdio::null())
         .stderr(Stdio::null())
         .arg(command_path)
@@ -118,8 +117,10 @@ fn open(selected_settings: &settings::Commands, command_path: &Path) {
 }
 
 #[cfg(target_os = "macos")]
+#[allow(clippy::zombie_processes)]
 fn open(selected_settings: &settings::Commands, command_path: &Path) {
     Command::new("open")
+        .stdin(Stdio::null())
         .stdout(Stdio::null())
         .stderr(Stdio::null())
         .arg("-a")

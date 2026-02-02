@@ -4,11 +4,9 @@ use env::VarError;
 use serde::Deserialize;
 use std::env;
 
-
 #[derive(Debug, Deserialize)]
 pub struct Settings {
     pub commands: Vec<Commands>,
-    pub walkdir: WalkDirChoice,
     pub delay: i64,
 }
 
@@ -18,20 +16,31 @@ pub struct Commands {
     pub command: String,
     pub command_type: CommandType,
     pub search_by: SearchBy,
-    pub search_for: String,
+    #[serde(deserialize_with = "deserialize_search_for")]
+    pub search_for: Vec<String>,
+}
+
+fn deserialize_search_for<'de, D>(deserializer: D) -> Result<Vec<String>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    #[derive(Deserialize)]
+    #[serde(untagged)]
+    enum SearchForValue {
+        String(String),
+        Vec(Vec<String>),
+    }
+
+    match SearchForValue::deserialize(deserializer)? {
+        SearchForValue::String(s) => Ok(vec![s]),
+        SearchForValue::Vec(v) => Ok(v),
+    }
 }
 
 #[derive(Debug, Deserialize)]
 pub enum CommandType {
     File,
     Directory,
-}
-
-#[derive(Debug, Deserialize)]
-pub enum WalkDirChoice {
-    WalkDir,
-    #[serde(rename = "fd")]
-    Fd,
 }
 
 #[derive(Eq, PartialEq, Debug, Deserialize)]
@@ -55,7 +64,6 @@ impl Settings {
 
         let settings = Config::builder()
             .add_source(File::new(&settings_file, FileFormat::Yaml))
-            .set_default("walkdir", "WalkDir")?
             .set_default("delay", "0")?
             .build()?
             .try_deserialize()?;
@@ -73,8 +81,8 @@ impl Settings {
 Key: {}
 Command: {}
 Command Type: {:?}
-Search for: {}
-Search by:{:?}
+Search for: {:?}
+Search by: {:?}
 \n",
                 c.key, c.command, c.command_type, c.search_for, c.search_by
             );
